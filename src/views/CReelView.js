@@ -1,6 +1,6 @@
 import { Container, Graphics } from "pixi.js";
-import { CItemView } from "./CItemView";
-import { easeOutBack } from "../utils/easing";
+import { CItemView } from "./CItemView.js";
+import { easeOutBack } from "../utils/easing.js";
 
 export class CReelView extends Container {
   constructor(sequence, config) {
