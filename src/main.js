@@ -1,6 +1,6 @@
 import { Application } from "pixi.js";
 import { CGameView } from "./views/CGameView.js";
-import { CGameConfig } from "./config/CGameConfig";
+import { CGameConfig } from "./config/CGameConfig.js";
 
 async function bootstrap() {
   const app = new Application();
