@@ -13,6 +13,7 @@ export class CGameView extends Container {
     this.isBusy = false;
     this.isStopping = false;
     this.onAllStopped = null;
+    this.autoStopTimer = null;
   }
 
   async init() {
@@ -44,6 +45,10 @@ export class CGameView extends Container {
     frame.y = -totalHeight / 2;
     this.addChildAt(frame, 0);
 
+    this.initButton();
+  }
+
+  initButton() {
     this.button = new CButton("SPIN");
 
     this.button.x = -this.button.width / 2;
@@ -101,11 +106,24 @@ export class CGameView extends Container {
     for (const reel of this.reels) {
       reel.start();
     }
+
+    if (this.autoStopTimer) {
+      clearTimeout(this.autoStopTimer);
+    }
+
+    this.autoStopTimer = setTimeout(() => {
+      this.stop();
+    }, this.config.autoStopDelay);
   }
 
   stop() {
     if (!this.isBusy || this.isStopping) {
       return;
+    }
+
+    if (this.autoStopTimer) {
+      clearTimeout(this.autoStopTimer);
+      this.autoStopTimer = null;
     }
 
     const elapsed = performance.now() - this.spinStartedAt;

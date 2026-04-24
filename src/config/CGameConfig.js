@@ -27,6 +27,7 @@ export class CGameConfig {
     this.spinSpeed = 1200;
     this.minSpinDuration = 700;
     this.overshoot = 4;
+    this.autoStopDelay = 2000;
 
     this.sequences = [];
 
