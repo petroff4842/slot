@@ -5,7 +5,7 @@ export class CButton extends Container {
     super();
 
     this.bg = new Graphics();
-    this.bg.rect(0, 0, 150, 50).fill({ color: 0x00aa00 });
+    this.bg.roundRect(0, 0, 150, 50, 10).fill({ color: 0x00aa00 });
 
     this.addChild(this.bg);
 

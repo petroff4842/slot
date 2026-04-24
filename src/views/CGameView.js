@@ -1,12 +1,15 @@
 import { Container, Graphics } from "pixi.js";
 import { CItemView } from "./CItemView.js";
 import { CReelView } from "./CReelView.js";
+import { CButton } from "../ui/CButton.js";
+import { CMachineFrame } from "../ui/CMachineFrame.js";
 
 export class CGameView extends Container {
   constructor(config) {
     super();
     this.config = config;
     this.reels = [];
+    this.button = null;
     this.isBusy = false;
     this.isStopping = false;
     this.onAllStopped = null;
@@ -29,11 +32,43 @@ export class CGameView extends Container {
     const startX = -totalWidth / 2;
 
     let offsetX = startX;
+    const totalHeight = this.reels[0].height;
 
     for (const reel of this.reels) {
       reel.x = offsetX;
       offsetX += reel.width + this.config.reelSpacing;
+      reel.y = -totalHeight / 2;
     }
+
+    const frame = new CMachineFrame(totalWidth, totalHeight, 20);
+    frame.y = -totalHeight / 2;
+    this.addChildAt(frame, 0);
+
+    this.button = new CButton("SPIN");
+
+    this.button.x = -this.button.width / 2;
+    this.button.y = this.reels[0].height / 2 + 80;
+
+    this.button.on("pointerdown", () => {
+      if (!this.isBusy) {
+        this.spin();
+        this.button.setText("STOP");
+        this.button.setEnabled(false);
+
+        setTimeout(() => {
+          this.button.setEnabled(true);
+        }, this.config.minSpinDuration);
+      } else {
+        this.button.setEnabled(false);
+        this.stop();
+      }
+    });
+
+    this.addChild(this.button);
+    this.onAllStopped = () => {
+      this.button.setText("SPIN");
+      this.button.setEnabled(true);
+    };
   }
 
   update(delta) {

@@ -1,5 +1,6 @@
 import { Container, Graphics } from "pixi.js";
 import { CItemView } from "./CItemView";
+import { easeOutBack } from "../utils/easing";
 
 export class CReelView extends Container {
   constructor(sequence, config) {
@@ -118,11 +119,4 @@ export class CReelView extends Container {
 
     this.stopElapsed = 0;
   }
-}
-
-function easeOutBack(t, overshoot = 1.7) {
-  const c1 = overshoot;
-  const c3 = c1 + 1;
-  const x = t - 1;
-  return 1 + c3 * x * x * x + c1 * x * x;
 }

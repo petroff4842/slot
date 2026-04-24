@@ -26,7 +26,6 @@ export class CGameConfig {
     this.stopDuration = 300;
     this.spinSpeed = 1200;
     this.minSpinDuration = 700;
-    // this.reelStopStagger = 180;
     this.overshoot = 4;
 
     this.sequences = [];

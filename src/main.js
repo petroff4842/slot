@@ -1,7 +1,6 @@
 import { Application } from "pixi.js";
 import { CGameView } from "./views/CGameView.js";
 import { CGameConfig } from "./config/CGameConfig";
-import { CButton } from "./ui/CButton.js";
 
 async function bootstrap() {
   const app = new Application();
@@ -35,36 +34,9 @@ async function bootstrap() {
     game.update(ticker.deltaMS);
   });
 
-  const button = new CButton("SPIN");
-
-  button.x = app.screen.width / 2 - button.width / 2;
-  button.y = app.screen.height - 80;
-
-  button.on("pointerdown", () => {
-    if (!game.isBusy) {
-      game.spin();
-      button.setText("STOP");
-      button.setEnabled(false);
-
-      setTimeout(() => {
-        button.setEnabled(true);
-      }, game.config.minSpinDuration);
-    } else {
-      button.setEnabled(false);
-      game.stop();
-    }
-  });
-
-  app.stage.addChild(button);
-  game.onAllStopped = () => {
-    button.setText("SPIN");
-    button.setEnabled(true);
-  };
-
   window.addEventListener("resize", () => {
     game.x = app.screen.width / 2;
     game.y = app.screen.height / 2;
-    button.x = app.screen.width / 2;
   });
 }
 
