@@ -29,6 +29,8 @@ export class CGameConfig {
     this.minSpinDuration = 700;
     this.overshoot = 4;
     this.autoStopDelay = 2000;
+    this.reelItemsCount = 8;
+    this.symbolScale = 1.5;
 
     this.sequences = [];
 

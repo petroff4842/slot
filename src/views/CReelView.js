@@ -22,10 +22,10 @@ export class CReelView extends Container {
   }
 
   async init() {
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < this.config.reelItemsCount; i++) {
       const item = this.sequence.at(i);
 
-      const itemView = new CItemView();
+      const itemView = new CItemView(this.config.symbolScale);
       itemView.setItem(item);
 
       if (this.itemHeight == null) {

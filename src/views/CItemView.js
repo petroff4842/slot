@@ -1,11 +1,12 @@
 import { Container, Sprite, Assets } from "pixi.js";
 
 export class CItemView extends Container {
-  constructor() {
+  constructor(symbolScale = 1) {
     super();
 
     this.sprite = null;
     this.currentItem = null;
+    this.symbolScale = symbolScale;
   }
 
   setItem(item) {
@@ -28,6 +29,6 @@ export class CItemView extends Container {
 
     this.sprite.x = 0;
     this.sprite.y = 0;
-    this.sprite.scale.set(1.5);
+    this.sprite.scale.set(this.symbolScale);
   }
 }
