@@ -8,11 +8,16 @@ export class CItemView extends Container {
     this.currentItem = null;
   }
 
-  async update(item) {
+  setItem(item) {
     if (this.currentItem === item) return;
-    this.currentItem = item;
 
-    const texture = await Assets.load(item.texture);
+    const texture = Assets.get(item.texture);
+
+    if (!texture) {
+      throw new Error(`Texture is not loaded: ${item.texture}`);
+    }
+
+    this.currentItem = item;
 
     if (!this.sprite) {
       this.sprite = new Sprite(texture);

@@ -26,7 +26,7 @@ export class CReelView extends Container {
       const item = this.sequence.at(i);
 
       const itemView = new CItemView();
-      await itemView.update(item);
+      itemView.setItem(item);
 
       if (this.itemHeight == null) {
         this.itemHeight = itemView.height;
@@ -57,10 +57,16 @@ export class CReelView extends Container {
     for (let i = 0; i < this.itemViews.length; i++) {
       const itemView = this.itemViews[i];
 
+      const rawPosition = i * this.itemHeight + this.contentOffset;
+
+      const cycle = Math.floor(rawPosition / this.totalHeight);
+
+      const itemIndex = i - cycle * this.itemViews.length;
+
+      itemView.setItem(this.sequence.at(itemIndex));
+
       itemView.y =
-        this.startY +
-        ((i * this.itemHeight + this.contentOffset) % this.totalHeight) -
-        this.itemHeight;
+        this.startY + (rawPosition % this.totalHeight) - this.itemHeight;
     }
   }
 

@@ -1,4 +1,4 @@
-import { Container } from "pixi.js";
+import { Assets, Container } from "pixi.js";
 import { CReelView } from "./CReelView.js";
 import { CButton } from "../ui/CButton.js";
 import { CMachineFrame } from "../ui/CMachineFrame.js";
@@ -16,6 +16,8 @@ export class CGameView extends Container {
   }
 
   async init() {
+    await Assets.load(this.config.symbolPool.map((item) => item.texture));
+
     for (let i = 0; i < this.config.reelsCount; i++) {
       const sequence = this.config.sequenceForReel(i);
       const reel = new CReelView(sequence, this.config);

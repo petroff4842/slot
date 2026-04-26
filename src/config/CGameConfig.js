@@ -19,6 +19,7 @@ const SYMBOL_POOL = [
 
 export class CGameConfig {
   constructor() {
+    this.symbolPool = SYMBOL_POOL;
     this.reelsCount = 5;
     this.visibleRows = 3;
     this.reelSpacing = 7;
