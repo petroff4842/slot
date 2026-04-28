@@ -1,4 +1,4 @@
-## 🚀 How to run
+How to run:
 
 1. Unzip the archive
 
