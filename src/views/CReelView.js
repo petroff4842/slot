@@ -3,9 +3,8 @@ import { CItemView } from "./CItemView.js";
 import { easeOutBack } from "../utils/easing.js";
 
 export class CReelView extends Container {
-  constructor(sequence, config) {
+  constructor(config) {
     super();
-    this.sequence = sequence;
     this.config = config;
     this.itemViews = [];
     this.contentOffset = 0;
@@ -23,9 +22,10 @@ export class CReelView extends Container {
 
   async init() {
     for (let i = 0; i < this.config.reelItemsCount; i++) {
-      const item = this.sequence.at(i);
+      const item = this.getRandomItem();
 
       const itemView = new CItemView(this.config.symbolScale);
+      itemView.lastCycle = 0;
       itemView.setItem(item);
 
       if (this.itemHeight == null) {
@@ -53,6 +53,11 @@ export class CReelView extends Container {
     this.layoutItems();
   }
 
+  getRandomItem() {
+    const index = Math.floor(Math.random() * this.config.symbolPool.length);
+    return this.config.symbolPool[index];
+  }
+
   layoutItems() {
     for (let i = 0; i < this.itemViews.length; i++) {
       const itemView = this.itemViews[i];
@@ -61,9 +66,10 @@ export class CReelView extends Container {
 
       const cycle = Math.floor(rawPosition / this.totalHeight);
 
-      const itemIndex = i - cycle * this.itemViews.length;
-
-      itemView.setItem(this.sequence.at(itemIndex));
+      if (cycle !== itemView.lastCycle) {
+        itemView.setItem(this.getRandomItem());
+        itemView.lastCycle = cycle;
+      }
 
       itemView.y =
         this.startY + (rawPosition % this.totalHeight) - this.itemHeight;

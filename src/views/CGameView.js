@@ -19,8 +19,7 @@ export class CGameView extends Container {
     await Assets.load(this.config.symbolPool.map((item) => item.texture));
 
     for (let i = 0; i < this.config.reelsCount; i++) {
-      const sequence = this.config.sequenceForReel(i);
-      const reel = new CReelView(sequence, this.config);
+      const reel = new CReelView(this.config);
       await reel.init();
       reel.x = i * (reel.width + this.config.reelSpacing);
       reel.y = 0;

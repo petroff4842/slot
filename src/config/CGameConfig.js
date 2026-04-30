@@ -1,5 +1,4 @@
 import { CItem } from "../models/CItem.js";
-import { CSequence } from "../models/CSequence.js";
 
 const SYMBOL_POOL = [
   new CItem({ id: "0", texture: "/symbols/M00_000.jpg" }),
@@ -31,28 +30,5 @@ export class CGameConfig {
     this.autoStopDelay = 2000;
     this.reelItemsCount = 8;
     this.symbolScale = 1.5;
-
-    this.sequences = [];
-
-    for (let i = 0; i < this.reelsCount; i++) {
-      this.sequences.push(buildSequence(i));
-    }
   }
-
-  sequenceForReel(index) {
-    return this.sequences[index];
-  }
-}
-
-function buildSequence(seed) {
-  const len = SYMBOL_POOL.length;
-  const items = [];
-  const totalSymbols = 16;
-
-  for (let i = 0; i < totalSymbols; i++) {
-    const idx = (i * 3 + seed * 5 + 1) % len;
-    items.push(SYMBOL_POOL[idx]);
-  }
-
-  return new CSequence(items);
 }
