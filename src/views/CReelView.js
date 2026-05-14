@@ -19,6 +19,7 @@ export class CReelView extends Container {
     this.stopStartOffset = 0;
     this.stopElapsed = 0;
     this.stopDuration = this.config.stopDuration;
+    this.spinStartElapsed = 0;
   }
 
   async init() {
@@ -91,7 +92,17 @@ export class CReelView extends Container {
         this.isStopping = false;
       }
     } else {
-      this.contentOffset += (this.config.spinSpeed * delta) / 1000;
+      this.spinStartElapsed += delta;
+
+      const startDuration = this.config.spinStartDuration || 0;
+      const startProgress =
+        startDuration > 0
+          ? Math.min(1, this.spinStartElapsed / startDuration)
+          : 1;
+      const speedMultiplier = startProgress * startProgress;
+
+      this.contentOffset +=
+        (this.config.spinSpeed * speedMultiplier * delta) / 1000;
     }
 
     this.layoutItems();
@@ -115,6 +126,7 @@ export class CReelView extends Container {
   start() {
     this.isSpinning = true;
     this.isStopping = false;
+    this.spinStartElapsed = 0;
   }
 
   stop() {
