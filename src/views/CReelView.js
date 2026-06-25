@@ -17,9 +17,12 @@ export class CReelView extends Container {
     this.stopTargetOffset = 0;
 
     this.stopStartOffset = 0;
+    this.stopEaseStartOffset = 0;
     this.stopElapsed = 0;
     this.stopDuration = this.config.stopDuration;
     this.spinStartElapsed = 0;
+    this.isStopEasing = false;
+    this.sequenceShift = 0;
   }
 
   async init() {
@@ -62,7 +65,7 @@ export class CReelView extends Container {
 
       const cycle = Math.floor(rawPosition / this.totalHeight);
 
-      const itemIndex = i - cycle * this.itemViews.length;
+      const itemIndex = i - cycle * this.itemViews.length + this.sequenceShift;
 
       itemView.setItem(this.sequence.at(itemIndex));
 
@@ -77,20 +80,7 @@ export class CReelView extends Container {
     }
 
     if (this.isStopping) {
-      this.stopElapsed += delta;
-
-      const t = Math.min(1, this.stopElapsed / this.stopDuration);
-      const eased = easeOutBack(t, this.config.overshoot);
-
-      this.contentOffset =
-        this.stopStartOffset +
-        (this.stopTargetOffset - this.stopStartOffset) * eased;
-
-      if (t >= 1) {
-        this.contentOffset = this.stopTargetOffset;
-        this.isSpinning = false;
-        this.isStopping = false;
-      }
+      this.updateStopping(delta);
     } else {
       this.spinStartElapsed += delta;
 
@@ -108,11 +98,38 @@ export class CReelView extends Container {
     this.layoutItems();
   }
 
-  getNearestStopOffset() {
-    const step = this.itemHeight;
-    const current = this.contentOffset;
+  updateStopping(delta) {
+    if (!this.isStopEasing) {
+      if (this.contentOffset < this.stopEaseStartOffset) {
+        const step = (this.config.spinSpeed * delta) / 1000;
+        this.contentOffset = Math.min(
+          this.contentOffset + step,
+          this.stopEaseStartOffset,
+        );
+        return;
+      }
 
-    return Math.ceil(current / step) * step;
+      this.isStopEasing = true;
+      this.stopStartOffset = this.contentOffset;
+      this.stopElapsed = 0;
+      this.stopDuration = this.config.stopDuration;
+    }
+
+    this.stopElapsed += delta;
+
+    const t = Math.min(1, this.stopElapsed / this.stopDuration);
+    const eased = easeOutBack(t, this.config.overshoot);
+
+    this.contentOffset =
+      this.stopStartOffset +
+      (this.stopTargetOffset - this.stopStartOffset) * eased;
+
+    if (t >= 1) {
+      this.contentOffset = this.stopTargetOffset;
+      this.isSpinning = false;
+      this.isStopping = false;
+      this.isStopEasing = false;
+    }
   }
 
   get width() {
@@ -126,15 +143,56 @@ export class CReelView extends Container {
   start() {
     this.isSpinning = true;
     this.isStopping = false;
+    this.isStopEasing = false;
     this.spinStartElapsed = 0;
   }
 
-  stop() {
+  stopAt(index) {
+    const targetOffset = this.getOffsetForIndex(index);
+    this.beginStop(targetOffset, index);
+  }
+
+  beginStop(targetOffset, index = null) {
     this.isStopping = true;
 
     this.stopStartOffset = this.contentOffset;
-    this.stopTargetOffset = this.getNearestStopOffset();
+    this.stopTargetOffset = targetOffset;
+    this.isStopEasing = false;
 
+    if (index != null) {
+      const targetStep = Math.round(this.stopTargetOffset / this.itemHeight);
+
+      this.sequenceShift = this.getSequenceShiftForTargetStep(
+        targetStep,
+        index,
+      );
+    }
+
+    const distance = Math.max(0, this.stopTargetOffset - this.stopStartOffset);
+    const easeDistance = Math.min(this.itemHeight, distance);
+
+    this.stopEaseStartOffset = this.stopTargetOffset - easeDistance;
+    this.stopDuration = this.config.stopDuration;
     this.stopElapsed = 0;
+  }
+
+  getOffsetForIndex(index) {
+    const step = this.itemHeight;
+    const currentStep = this.contentOffset / step;
+    const cruiseDuration =
+      this.config.stopCruiseDuration || this.config.reelStopDelay || 300;
+    const cruiseDistance = (this.config.spinSpeed * cruiseDuration) / 1000;
+    const targetStep = Math.ceil(currentStep + cruiseDistance / step + 1);
+
+    return targetStep * step;
+  }
+
+  getSequenceShiftForTargetStep(targetStep, index) {
+    const sequenceLength = this.sequence.length;
+
+    return (
+      (((targetStep - 1 + index) % sequenceLength) + sequenceLength) %
+      sequenceLength
+    );
   }
 }

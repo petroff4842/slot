@@ -13,6 +13,8 @@ export class CGameView extends Container {
     this.isStopping = false;
     this.onAllStopped = null;
     this.autoStopTimer = null;
+    this.stoppingReelIndex = -1;
+    this.nextReelStopElapsed = 0;
   }
 
   async init() {
@@ -81,6 +83,9 @@ export class CGameView extends Container {
     for (const reel of this.reels) {
       reel.update(delta);
     }
+
+    this.updateStopCascade(delta);
+
     if (this.isBusy && this.isStopping) {
       const allStopped = this.reels.every((reel) => !reel.isSpinning);
 
@@ -94,6 +99,26 @@ export class CGameView extends Container {
     }
   }
 
+  updateStopCascade(delta) {
+    if (
+      !this.isStopping ||
+      this.stoppingReelIndex < 0 ||
+      this.stoppingReelIndex >= this.reels.length - 1
+    ) {
+      return;
+    }
+
+    this.nextReelStopElapsed += delta;
+
+    if (this.nextReelStopElapsed < this.config.reelStopDelay) {
+      return;
+    }
+
+    this.stoppingReelIndex++;
+    this.nextReelStopElapsed = 0;
+    this.reels[this.stoppingReelIndex].stopAt(0);
+  }
+
   spin() {
     if (this.isBusy) {
       return;
@@ -101,6 +126,8 @@ export class CGameView extends Container {
 
     this.isBusy = true;
     this.isStopping = false;
+    this.stoppingReelIndex = -1;
+    this.nextReelStopElapsed = 0;
 
     this.spinStartedAt = performance.now();
 
@@ -134,12 +161,10 @@ export class CGameView extends Container {
     }
 
     this.isStopping = true;
+    this.stoppingReelIndex = 0;
+    this.nextReelStopElapsed = 0;
 
-    for (let i = 0; i < this.reels.length; i++) {
-      setTimeout(() => {
-        this.reels[i].stop();
-      }, i * this.config.reelStopDelay);
-    }
+    this.reels[this.stoppingReelIndex].stopAt(0);
   }
 
   get isSpinning() {
