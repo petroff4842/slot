@@ -2,6 +2,7 @@ import { Assets, Container } from "pixi.js";
 import { CReelView } from "./CReelView.js";
 import { CButton } from "../ui/CButton.js";
 import { CMachineFrame } from "../ui/CMachineFrame.js";
+import { CSpinService } from "../services/CSpinService.js";
 
 export class CGameView extends Container {
   constructor(config) {
@@ -13,6 +14,7 @@ export class CGameView extends Container {
     this.isStopping = false;
     this.onAllStopped = null;
     this.autoStopTimer = null;
+    this.spinService = new CSpinService(this.config);
   }
 
   async init() {
@@ -135,9 +137,11 @@ export class CGameView extends Container {
 
     this.isStopping = true;
 
+    const spinResult = this.spinService.generate();
+
     for (let i = 0; i < this.reels.length; i++) {
       setTimeout(() => {
-        this.reels[i].stop();
+        this.reels[i].stopWith(spinResult.reelAt(i));
       }, i * this.config.reelStopDelay);
     }
   }
