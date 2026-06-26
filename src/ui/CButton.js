@@ -1,13 +1,32 @@
-import { Container, Graphics, Text } from "pixi.js";
+import { Container, Text, Assets, Sprite, Rectangle } from "pixi.js";
 
 export class CButton extends Container {
   constructor(labelText = "BUTTON") {
     super();
 
-    this.bg = new Graphics();
-    this.bg.roundRect(0, 0, 150, 50, 10).fill({ color: 0x00aa00 });
+    const texture = Assets.get("/ui/button.png");
 
+    this.glow = new Sprite(texture);
+    this.glow.anchor.set(0.5);
+    this.glow.scale.set(0.815);
+    this.glow.tint = 0xffdd00;
+    this.glow.alpha = 0;
+    this.addChild(this.glow);
+
+    this.bg = new Sprite(texture);
+    this.bg.anchor.set(0.5);
+    this.bg.scale.set(0.8);
     this.addChild(this.bg);
+
+    const hitWidth = this.bg.width * 0.9;
+    const hitHeight = this.bg.height * 0.5;
+
+    this.hitArea = new Rectangle(
+      -hitWidth / 2,
+      -hitHeight / 2,
+      hitWidth,
+      hitHeight,
+    );
 
     this.label = new Text({
       text: labelText,
@@ -18,8 +37,8 @@ export class CButton extends Container {
     });
 
     this.label.anchor.set(0.5);
-    this.label.x = 75;
-    this.label.y = 25;
+    this.label.x = 0;
+    this.label.y = 0;
 
     this.addChild(this.label);
 
@@ -27,19 +46,19 @@ export class CButton extends Container {
     this.cursor = "pointer";
 
     this.on("pointerover", () => {
-      this.bg.tint = 0x66cc66;
+      this.glow.alpha = 1;
     });
 
     this.on("pointerout", () => {
-      this.bg.tint = 0xffffff;
+      this.glow.alpha = 0;
     });
 
     this.on("pointerdown", () => {
-      this.bg.tint = 0x999999;
-    });
-
-    this.on("pointerup", () => {
-      this.bg.tint = 0xffffff;
+      this.scale.set(0.9);
+      this.glow.alpha = 0;
+      setTimeout(() => {
+        this.scale.set(1);
+      }, 100);
     });
   }
 
@@ -48,6 +67,7 @@ export class CButton extends Container {
   }
 
   setEnabled(enabled) {
+    this.bg.tint = enabled ? 0xffffff : 0x999999;
     this.eventMode = enabled ? "static" : "none";
     this.cursor = enabled ? "pointer" : "default";
     this.alpha = enabled ? 1 : 0.6;

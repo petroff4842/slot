@@ -18,7 +18,10 @@ export class CGameView extends Container {
   }
 
   async init() {
-    await Assets.load(this.config.symbolPool.map((item) => item.texture));
+    await Assets.load([
+      ...this.config.symbolPool.map((item) => item.texture),
+      "/ui/button.png",
+    ]);
 
     for (let i = 0; i < this.config.reelsCount; i++) {
       const sequence = this.config.sequenceForReel(i);
@@ -54,10 +57,10 @@ export class CGameView extends Container {
   initButton() {
     this.button = new CButton("SPIN");
 
-    this.button.x = -this.button.width / 2;
+    this.button.x = 0;
     this.button.y = this.reels[0].height / 2 + 80;
 
-    this.button.on("pointerdown", () => {
+    this.button.on("pointerup", () => {
       if (!this.isBusy) {
         this.spin();
         this.button.setText("STOP");
