@@ -3,6 +3,7 @@ import { CReelView } from "./CReelView.js";
 import { CButton } from "../ui/CButton.js";
 import { CMachineFrame } from "../ui/CMachineFrame.js";
 import { CSpinService } from "../services/CSpinService.js";
+import { CWinService } from "../services/CWinService.js";
 
 export class CGameView extends Container {
   constructor(config) {
@@ -15,6 +16,7 @@ export class CGameView extends Container {
     this.onAllStopped = null;
     this.autoStopTimer = null;
     this.spinService = new CSpinService(this.config);
+    this.winService = new CWinService(this.config);
   }
 
   async init() {
@@ -141,6 +143,8 @@ export class CGameView extends Container {
     this.isStopping = true;
 
     const spinResult = this.spinService.generate();
+    const wins = this.winService.evaluate(spinResult);
+    console.log(wins);
 
     for (let i = 0; i < this.reels.length; i++) {
       setTimeout(() => {
