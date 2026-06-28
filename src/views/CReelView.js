@@ -221,4 +221,12 @@ export class CReelView extends Container {
       }
     }
   }
+
+  getVisibleItemView(rowIndex) {
+    return this.itemViews.find((itemView) => {
+      const itemRow = Math.round(itemView.y / this.itemHeight);
+
+      return itemRow === rowIndex;
+    });
+  }
 }

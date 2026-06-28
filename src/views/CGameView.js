@@ -94,6 +94,9 @@ export class CGameView extends Container {
     for (const reel of this.reels) {
       reel.update(delta);
     }
+    if (this.winLinesView) {
+      this.winLinesView.update(delta);
+    }
     if (this.isBusy && this.isStopping) {
       const allStopped = this.reels.every((reel) => !reel.isSpinning);
 
