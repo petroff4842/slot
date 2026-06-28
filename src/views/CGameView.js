@@ -1,9 +1,10 @@
-import { Assets, Container, Graphics } from "pixi.js";
+import { Assets, Container } from "pixi.js";
 import { CReelView } from "./CReelView.js";
 import { CButton } from "../ui/CButton.js";
 import { CMachineFrame } from "../ui/CMachineFrame.js";
 import { CSpinService } from "../services/CSpinService.js";
 import { CWinService } from "../services/CWinService.js";
+import { CWinLinesView } from "./CWinLinesView.js";
 
 export class CGameView extends Container {
   constructor(config) {
@@ -15,7 +16,7 @@ export class CGameView extends Container {
     this.isStopping = false;
     this.onAllStopped = null;
     this.autoStopTimer = null;
-    this.winLineGraphics = null;
+    this.winLinesView = null;
     this.currentWins = [];
     this.spinService = new CSpinService(this.config);
     this.winService = new CWinService(this.config);
@@ -55,8 +56,8 @@ export class CGameView extends Container {
     frame.y = -totalHeight / 2;
     this.addChildAt(frame, 0);
 
-    this.winLineGraphics = new Graphics();
-    this.addChild(this.winLineGraphics);
+    this.winLinesView = new CWinLinesView();
+    this.addChild(this.winLinesView);
 
     this.initButton();
   }
@@ -97,7 +98,9 @@ export class CGameView extends Container {
       const allStopped = this.reels.every((reel) => !reel.isSpinning);
 
       if (allStopped) {
-        this.showWins(this.currentWins);
+        if (this.winLinesView) {
+          this.winLinesView.show(this.currentWins, this.reels);
+        }
         this.isBusy = false;
         this.isStopping = false;
         if (this.onAllStopped) {
@@ -117,8 +120,8 @@ export class CGameView extends Container {
 
     this.currentWins = [];
 
-    if (this.winLineGraphics) {
-      this.winLineGraphics.clear();
+    if (this.winLinesView) {
+      this.winLinesView.clear();
     }
 
     this.spinStartedAt = performance.now();
@@ -162,55 +165,6 @@ export class CGameView extends Container {
       setTimeout(() => {
         this.reels[i].stopWith(spinResult.reelAt(i));
       }, i * this.config.reelStopDelay);
-    }
-  }
-
-  getSymbolLinePoint(reelIndex, rowIndex, side = "left") {
-    const reel = this.reels[reelIndex];
-    let x = reel.x;
-    if (side === "right") {
-      x += reel.width;
-    }
-
-    return {
-      x: x,
-      y: reel.y + reel.itemHeight * rowIndex + reel.itemHeight / 2,
-    };
-  }
-
-  getWinLinePoints(win) {
-    const points = [];
-
-    const line = win.line;
-    const count = win.count;
-
-    for (let i = 0; i < count; i++) {
-      const leftPoint = this.getSymbolLinePoint(i, line[i], "left");
-      const rightPoint = this.getSymbolLinePoint(i, line[i], "right");
-      points.push(leftPoint, rightPoint);
-    }
-    return points;
-  }
-
-  showWins(wins) {
-    if (!this.winLineGraphics) {
-      return;
-    }
-    this.winLineGraphics.clear();
-    for (const win of wins) {
-      const points = this.getWinLinePoints(win);
-      if (points.length < 2) {
-        continue;
-      }
-      this.winLineGraphics.moveTo(points[0].x, points[0].y);
-      for (let i = 1; i < points.length; i++) {
-        this.winLineGraphics.lineTo(points[i].x, points[i].y);
-      }
-      this.winLineGraphics.stroke({
-        width: 4,
-        color: 0xffff00,
-        alpha: 0.95,
-      });
     }
   }
 
