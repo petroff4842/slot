@@ -39,11 +39,13 @@ export class CItemView extends Container {
   startWinAnimation() {
     this.isWinAnimating = true;
     this.winAnimationElapsed = 0;
+    this.zIndex = 10;
   }
 
   stopWinAnimation() {
     this.isWinAnimating = false;
     this.winAnimationElapsed = 0;
+    this.zIndex = 0;
 
     if (this.sprite) {
       this.sprite.alpha = 1;

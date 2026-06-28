@@ -22,6 +22,7 @@ export class CReelView extends Container {
     this.spinStartElapsed = 0;
     this.isStopBraking = false;
     this.forcedItems = new Map();
+    this.sortableChildren = true;
   }
 
   async init() {
