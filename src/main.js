@@ -1,7 +1,8 @@
-import { Application, Assets, Sprite } from "pixi.js";
+import { Application } from "pixi.js";
 import { CGameView } from "./views/CGameView.js";
 import { CGameConfig } from "./config/CGameConfig.js";
 import { CBubblesBackgroundView } from "./views/CBubblesBackgroundView.js";
+import { CBackgroundView } from "./views/CBackgroundView.js";
 
 async function bootstrap() {
   const app = new Application();
@@ -22,12 +23,10 @@ async function bootstrap() {
 
   container.appendChild(app.canvas);
 
-  const bgTexture = await Assets.load("/bg/bg.webp");
-  const bg = new Sprite(bgTexture);
+  const background = new CBackgroundView(app.screen.width, app.screen.height);
 
-  bg.anchor.set(0.5);
-  app.stage.addChild(bg);
-  resizeBackground();
+  await background.init();
+  app.stage.addChild(background);
 
   const bubbles = new CBubblesBackgroundView(
     app.screen.width,
@@ -49,25 +48,15 @@ async function bootstrap() {
   app.ticker.add((ticker) => {
     bubbles.update(ticker.deltaMS);
     game.update(ticker.deltaMS);
+    background.update(ticker.deltaMS);
   });
 
   window.addEventListener("resize", () => {
-    resizeBackground();
+    background.resize(app.screen.width, app.screen.height);
     game.x = app.screen.width / 2;
     game.y = app.screen.height / 2;
     bubbles.resize(app.screen.width, app.screen.height);
   });
-
-  function resizeBackground() {
-    const scale = Math.max(
-      app.screen.width / bg.texture.width,
-      app.screen.height / bg.texture.height,
-    );
-
-    bg.scale.set(scale);
-    bg.x = app.screen.width / 2;
-    bg.y = app.screen.height / 2;
-  }
 }
 
 bootstrap();
