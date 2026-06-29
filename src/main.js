@@ -30,12 +30,11 @@ async function bootstrap() {
   resizeBackground();
 
   const bubbles = new CBubblesBackgroundView(
-    app.renderer,
     app.screen.width,
     app.screen.height,
   );
 
-  bubbles.init();
+  await bubbles.init();
   app.stage.addChild(bubbles);
 
   const config = new CGameConfig();

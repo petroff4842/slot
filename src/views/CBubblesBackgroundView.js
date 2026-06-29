@@ -1,10 +1,9 @@
-import { Container, Graphics, ParticleContainer, Particle } from "pixi.js";
+import { Container, ParticleContainer, Particle, Assets } from "pixi.js";
 
 export class CBubblesBackgroundView extends Container {
-  constructor(renderer, width, height) {
+  constructor(width, height) {
     super();
 
-    this.renderer = renderer;
     this.areaWidth = width;
     this.areaHeight = height;
     this.bubbles = [];
@@ -19,35 +18,22 @@ export class CBubblesBackgroundView extends Container {
         color: false,
       },
     });
+
     this.addChild(this.particleContainer);
   }
 
-  init() {
-    this.bubbleTexture = this.createBubbleTexture();
+  async init() {
+    this.imageBubbleTexture = await Assets.load(
+      "/particles/particleBubble.webp",
+    );
 
     for (let i = 0; i < this.bubblesCount; i++) {
       this.createBubble();
     }
   }
 
-  createBubbleTexture() {
-    const bubble = new Graphics();
-
-    bubble
-      .circle(32, 32, 26)
-      .fill({ color: 0xffffff, alpha: 0.12 })
-      .stroke({ width: 2, color: 0xffffff, alpha: 0.35 });
-
-    bubble.circle(23, 22, 6).fill({ color: 0xffffff, alpha: 0.45 });
-
-    return this.renderer.generateTexture({
-      target: bubble,
-      resolution: 2,
-    });
-  }
-
   createBubble() {
-    const particle = new Particle(this.bubbleTexture);
+    const particle = new Particle(this.imageBubbleTexture);
 
     const scale = 0.25 + Math.random() * 0.9;
 
@@ -57,7 +43,7 @@ export class CBubblesBackgroundView extends Container {
     particle.y = Math.random() * this.areaHeight;
     particle.scaleX = scale;
     particle.scaleY = scale;
-    particle.alpha = 0.2 + Math.random() * 0.45;
+    particle.alpha = 0.1 + Math.random() * 0.3;
 
     this.particleContainer.addParticle(particle);
 
