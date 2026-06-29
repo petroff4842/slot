@@ -1,6 +1,7 @@
 import { Application, Assets, Sprite } from "pixi.js";
 import { CGameView } from "./views/CGameView.js";
 import { CGameConfig } from "./config/CGameConfig.js";
+import { CBubblesBackgroundView } from "./views/CBubblesBackgroundView.js";
 
 async function bootstrap() {
   const app = new Application();
@@ -28,6 +29,15 @@ async function bootstrap() {
   app.stage.addChild(bg);
   resizeBackground();
 
+  const bubbles = new CBubblesBackgroundView(
+    app.renderer,
+    app.screen.width,
+    app.screen.height,
+  );
+
+  bubbles.init();
+  app.stage.addChild(bubbles);
+
   const config = new CGameConfig();
   const game = new CGameView(config);
 
@@ -38,6 +48,7 @@ async function bootstrap() {
   app.stage.addChild(game);
 
   app.ticker.add((ticker) => {
+    bubbles.update(ticker.deltaMS);
     game.update(ticker.deltaMS);
   });
 
@@ -45,6 +56,7 @@ async function bootstrap() {
     resizeBackground();
     game.x = app.screen.width / 2;
     game.y = app.screen.height / 2;
+    bubbles.resize(app.screen.width, app.screen.height);
   });
 
   function resizeBackground() {
