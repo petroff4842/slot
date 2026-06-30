@@ -20,6 +20,7 @@ export class CGameView extends Container {
     this.currentWins = [];
     this.spinService = new CSpinService(this.config);
     this.winService = new CWinService(this.config);
+    this.currentWinSum = 0;
   }
 
   async init() {
@@ -120,7 +121,7 @@ export class CGameView extends Container {
     if (this.isBusy) {
       return;
     }
-
+    this.currentWinSum = 0;
     this.isBusy = true;
     this.isStopping = false;
 
@@ -166,6 +167,12 @@ export class CGameView extends Container {
     const spinResult = this.spinService.generate();
     this.currentWins = this.winService.evaluate(spinResult);
     console.log(this.currentWins);
+
+    this.currentWinSum = this.currentWins.reduce(
+      (sum, win) => sum + win.amount,
+      0,
+    );
+    console.log(this.currentWinSum);
 
     for (let i = 0; i < this.reels.length; i++) {
       setTimeout(() => {

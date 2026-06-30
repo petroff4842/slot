@@ -32,6 +32,7 @@ export class CWinService {
           symbol: firstSymbol,
           count,
           symbols,
+          amount: this.config.paytable[firstSymbol.id]?.[count] ?? 0,
         });
       }
     }
