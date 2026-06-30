@@ -26,6 +26,8 @@ export class CGameView extends Container {
     await Assets.load([
       ...this.config.symbolPool.map((item) => item.texture),
       "/ui/button.png",
+      "/ui/spin.png",
+      "/ui/stop.png",
     ]);
 
     for (let i = 0; i < this.config.reelsCount; i++) {
@@ -64,6 +66,7 @@ export class CGameView extends Container {
 
   initButton() {
     this.button = new CButton("SPIN");
+    this.button.setState(true);
 
     this.button.x = 0;
     this.button.y = this.reels[0].height / 2 + 80;
@@ -71,11 +74,11 @@ export class CGameView extends Container {
     this.button.on("pointerup", () => {
       if (!this.isBusy) {
         this.spin();
-        this.button.setText("STOP");
         this.button.setEnabled(false);
 
         setTimeout(() => {
           this.button.setEnabled(true);
+          this.button.setState(false);
         }, this.config.minSpinDuration);
       } else {
         this.button.setEnabled(false);
@@ -85,7 +88,7 @@ export class CGameView extends Container {
 
     this.addChild(this.button);
     this.onAllStopped = () => {
-      this.button.setText("SPIN");
+      this.button.setState(true);
       this.button.setEnabled(true);
     };
   }

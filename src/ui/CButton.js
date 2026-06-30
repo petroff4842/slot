@@ -1,11 +1,10 @@
-import { Container, Text, Assets, Sprite, Rectangle } from "pixi.js";
+import { Container, Assets, Sprite, Rectangle } from "pixi.js";
 
 export class CButton extends Container {
   constructor(labelText = "BUTTON") {
     super();
 
     const texture = Assets.get("/ui/button.png");
-
     this.glow = new Sprite(texture);
     this.glow.anchor.set(0.5);
     this.glow.scale.set(0.815);
@@ -18,6 +17,22 @@ export class CButton extends Container {
     this.bg.scale.set(0.8);
     this.addChild(this.bg);
 
+    const spinTexture = Assets.get("/ui/spin.png");
+    this.spin = new Sprite(spinTexture);
+    this.spin.anchor.set(0.5);
+    this.spin.scale.set(0.6);
+    this.spin.x = 0;
+    this.spin.y = -2;
+    this.addChild(this.spin);
+
+    const stopTexture = Assets.get("/ui/stop.png");
+    this.stop = new Sprite(stopTexture);
+    this.stop.anchor.set(0.5);
+    this.stop.scale.set(0.2);
+    this.stop.x = 0;
+    this.stop.y = -2;
+    this.addChild(this.stop);
+
     const hitWidth = this.bg.width * 0.9;
     const hitHeight = this.bg.height * 0.5;
 
@@ -27,20 +42,6 @@ export class CButton extends Container {
       hitWidth,
       hitHeight,
     );
-
-    this.label = new Text({
-      text: labelText,
-      style: {
-        fill: "#ffffff",
-        fontSize: 20,
-      },
-    });
-
-    this.label.anchor.set(0.5);
-    this.label.x = 0;
-    this.label.y = 0;
-
-    this.addChild(this.label);
 
     this.eventMode = "static";
     this.cursor = "pointer";
@@ -62,8 +63,9 @@ export class CButton extends Container {
     });
   }
 
-  setText(text) {
-    this.label.text = text;
+  setState(isSpin = true) {
+    this.spin.visible = isSpin;
+    this.stop.visible = !isSpin;
   }
 
   setEnabled(enabled) {
@@ -71,5 +73,7 @@ export class CButton extends Container {
     this.eventMode = enabled ? "static" : "none";
     this.cursor = enabled ? "pointer" : "default";
     this.alpha = enabled ? 1 : 0.6;
+    this.spin.alpha = enabled ? 1 : 0.3;
+    this.stop.alpha = enabled ? 1 : 0.3;
   }
 }
