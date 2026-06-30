@@ -37,7 +37,12 @@ export class CWinService {
       }
     }
 
-    return wins;
+    const totalWin = wins.reduce((sum, win) => sum + win.amount, 0);
+
+    return {
+      wins: wins,
+      totalWin: totalWin,
+    };
   }
 
   getLineSymbols(spinResult, line) {

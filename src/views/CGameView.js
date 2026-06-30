@@ -17,7 +17,7 @@ export class CGameView extends Container {
     this.onAllStopped = null;
     this.autoStopTimer = null;
     this.winLinesView = null;
-    this.currentWins = [];
+    this.currentWinResult = { wins: [], totalWin: 0 };
     this.spinService = new CSpinService(this.config);
     this.winService = new CWinService(this.config);
     this.currentWinSum = 0;
@@ -106,7 +106,7 @@ export class CGameView extends Container {
 
       if (allStopped) {
         if (this.winLinesView) {
-          this.winLinesView.show(this.currentWins, this.reels);
+          this.winLinesView.show(this.currentWinResult.wins, this.reels);
         }
         this.isBusy = false;
         this.isStopping = false;
@@ -125,7 +125,7 @@ export class CGameView extends Container {
     this.isBusy = true;
     this.isStopping = false;
 
-    this.currentWins = [];
+    this.currentWinResult = { wins: [], totalWin: 0 };
 
     if (this.winLinesView) {
       this.winLinesView.clear();
@@ -165,13 +165,10 @@ export class CGameView extends Container {
     this.isStopping = true;
 
     const spinResult = this.spinService.generate();
-    this.currentWins = this.winService.evaluate(spinResult);
-    console.log(this.currentWins);
+    this.currentWinResult = this.winService.evaluate(spinResult);
+    console.log(this.currentWinResult.wins);
 
-    this.currentWinSum = this.currentWins.reduce(
-      (sum, win) => sum + win.amount,
-      0,
-    );
+    this.currentWinSum = this.currentWinResult.totalWin;
     console.log(this.currentWinSum);
 
     for (let i = 0; i < this.reels.length; i++) {
