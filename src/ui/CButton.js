@@ -1,7 +1,7 @@
 import { Container, Assets, Sprite, Rectangle } from "pixi.js";
 
 export class CButton extends Container {
-  constructor(labelText = "BUTTON") {
+  constructor() {
     super();
 
     const texture = Assets.get("/ui/button.png");

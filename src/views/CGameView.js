@@ -65,7 +65,7 @@ export class CGameView extends Container {
   }
 
   initButton() {
-    this.button = new CButton("SPIN");
+    this.button = new CButton();
     this.button.setState(true);
 
     this.button.x = 0;
