@@ -5,6 +5,7 @@ import { CMachineFrame } from "../ui/CMachineFrame.js";
 import { CSpinService } from "../services/CSpinService.js";
 import { CWinService } from "../services/CWinService.js";
 import { CWinLinesView } from "./CWinLinesView.js";
+import { CGameHudView } from "./CGameHudView.js";
 
 export class CGameView extends Container {
   constructor(config) {
@@ -21,6 +22,7 @@ export class CGameView extends Container {
     this.spinService = new CSpinService(this.config);
     this.winService = new CWinService(this.config);
     this.currentWinSum = 0;
+    this.hudView = null;
   }
 
   async init() {
@@ -62,6 +64,9 @@ export class CGameView extends Container {
     this.winLinesView = new CWinLinesView();
     this.addChild(this.winLinesView);
 
+    this.hudView = new CGameHudView();
+    this.addChild(this.hudView);
+
     this.initButton();
   }
 
@@ -91,6 +96,9 @@ export class CGameView extends Container {
     this.onAllStopped = () => {
       this.button.setState(true);
       this.button.setEnabled(true);
+      if (this.hudView) {
+        this.hudView.countWin(this.currentWinSum);
+      }
     };
   }
 
@@ -115,6 +123,9 @@ export class CGameView extends Container {
         }
       }
     }
+    if (this.hudView) {
+      this.hudView.update(delta);
+    }
   }
 
   spin() {
@@ -129,6 +140,10 @@ export class CGameView extends Container {
 
     if (this.winLinesView) {
       this.winLinesView.clear();
+    }
+
+    if (this.hudView) {
+      this.hudView.clearWin();
     }
 
     this.spinStartedAt = performance.now();
