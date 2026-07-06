@@ -10,8 +10,7 @@ export class CAmountTextView extends Container {
 
     this.currentValue = 0;
     this.targetValue = 0;
-    this.elapsed = 0;
-    this.duration = 1000;
+    this.countSpeed = 0;
     this.isCounting = false;
 
     this.text = new BitmapText({
@@ -28,7 +27,7 @@ export class CAmountTextView extends Container {
   setValue(value) {
     this.currentValue = value;
     this.targetValue = value;
-    this.elapsed = 0;
+    this.countSpeed = 0;
     this.isCounting = false;
 
     this.text.text = `${this.label}: ${this.currentValue}`;
@@ -41,9 +40,8 @@ export class CAmountTextView extends Container {
   countTo(value, duration = 1000) {
     this.currentValue = 0;
     this.targetValue = value;
-    this.elapsed = 0;
-    this.duration = duration;
     this.isCounting = value > 0;
+    this.countSpeed = duration > 0 ? value / duration : value;
 
     this.text.text = `${this.label}: 0`;
 
@@ -57,18 +55,19 @@ export class CAmountTextView extends Container {
       return;
     }
 
-    this.elapsed += delta;
+    const nextValue = Math.min(
+      this.targetValue,
+      this.currentValue + this.countSpeed * delta,
+    );
+    const displayValue = Math.floor(nextValue);
 
-    const progress = Math.min(1, this.elapsed / this.duration);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const nextValue = Math.floor(this.targetValue * eased);
-
-    if (nextValue !== this.currentValue) {
-      this.currentValue = nextValue;
-      this.text.text = `${this.label}: ${this.currentValue}`;
+    if (displayValue !== Math.floor(this.currentValue)) {
+      this.text.text = `${this.label}: ${displayValue}`;
     }
 
-    if (progress >= 1) {
+    this.currentValue = nextValue;
+
+    if (this.currentValue >= this.targetValue) {
       this.setValue(this.targetValue);
     }
   }
