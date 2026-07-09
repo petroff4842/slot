@@ -65,6 +65,7 @@ export class CGameView extends Container {
 
     this.hudView = new CGameHudView(this.config.hud);
     this.hudView.setBalance(this.playerState.balance);
+    this.hudView.setBet(this.playerState.bet);
     this.addChild(this.hudView);
 
     this.initButton();

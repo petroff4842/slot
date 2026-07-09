@@ -45,6 +45,19 @@ export class CGameHudView extends Container {
       fontSize: 42,
     });
     this.addChild(this.balanceView);
+
+    this.betView = new CAmountTextView({
+      label: "BET",
+      fontFamily: "HudFont",
+      fontSize: 42,
+    });
+
+    this.betView.y = 355;
+    this.addChild(this.betView);
+  }
+
+  setBet(amount) {
+    this.betView.setValue(amount);
   }
 
   resize(width, height) {

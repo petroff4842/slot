@@ -1,13 +1,20 @@
 export class CPlayerState {
   #balance;
-  constructor({ balance = 1000 } = {}) {
+  #bet;
+  constructor({ balance = 1000, bet = 10 } = {}) {
     this.#balance = balance;
+    this.#bet = bet;
   }
 
   static fromServer(data = {}) {
     return new CPlayerState({
       balance: Number(data.balance ?? 0),
+      bet: Number(data.bet ?? 10),
     });
+  }
+
+  get bet() {
+    return this.#bet;
   }
 
   get balance() {

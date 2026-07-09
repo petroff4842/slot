@@ -134,6 +134,10 @@ export class CGameConfig {
 
     this.player = {
       initialBalance: 1000,
+      initialBet: 10,
+      minBet: 10,
+      maxBet: 100,
+      betStep: 10,
     };
 
     this.hud = {
