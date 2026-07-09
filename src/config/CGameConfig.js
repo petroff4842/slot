@@ -135,6 +135,11 @@ export class CGameConfig {
     this.player = {
       initialBalance: 1000,
     };
+
+    this.hud = {
+      winCountDuration: 2000,
+      balanceCountDuration: 1000,
+    };
   }
 
   sequenceForReel(index) {

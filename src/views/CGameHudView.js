@@ -23,9 +23,11 @@ function installHudFont() {
 }
 
 export class CGameHudView extends Container {
-  constructor() {
+  constructor(config = {}) {
     super();
     installHudFont();
+
+    this.config = config;
 
     this.winView = new CAmountTextView({
       label: "WIN",
@@ -60,11 +62,15 @@ export class CGameHudView extends Container {
   }
 
   countBalance(from, to) {
-    this.balanceView.countFromTo(from, to, 1000);
+    this.balanceView.countFromTo(
+      from,
+      to,
+      this.config.balanceCountDuration,
+    );
   }
 
   countWin(amount, onComplete = null) {
-    this.winView.countTo(amount, 2000, onComplete);
+    this.winView.countTo(amount, this.config.winCountDuration, onComplete);
   }
 
   update(delta) {

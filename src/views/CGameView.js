@@ -63,7 +63,7 @@ export class CGameView extends Container {
     this.winLinesView = new CWinLinesView();
     this.addChild(this.winLinesView);
 
-    this.hudView = new CGameHudView();
+    this.hudView = new CGameHudView(this.config.hud);
     this.hudView.setBalance(this.playerState.balance);
     this.addChild(this.hudView);
 
