@@ -42,9 +42,12 @@ export class CGameHudView extends Container {
       fontFamily: "HudFont",
       fontSize: 42,
     });
-    this.balanceView.y = -350;
-    this.balanceView.x = -400;
     this.addChild(this.balanceView);
+  }
+
+  resize(width, height) {
+    this.balanceView.x = -width / 2 + 200;
+    this.balanceView.y = -height / 2 + 50;
   }
 
   clearWin() {
@@ -56,7 +59,7 @@ export class CGameHudView extends Container {
   }
 
   countBalance(from, to) {
-    this.balanceView.countFromTo(from, to, 2000);
+    this.balanceView.countFromTo(from, to, 1000);
   }
 
   countWin(amount, onComplete = null) {

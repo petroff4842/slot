@@ -199,6 +199,12 @@ export class CGameView extends Container {
     }
   }
 
+  resize(width, height) {
+    if (this.hudView) {
+      this.hudView.resize(width, height);
+    }
+  }
+
   get isSpinning() {
     return this.reels.some((reel) => reel.isSpinning);
   }

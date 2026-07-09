@@ -50,6 +50,7 @@ async function bootstrap() {
   await game.init();
   game.x = app.screen.width / 2;
   game.y = app.screen.height / 2;
+  game.resize(app.screen.width, app.screen.height);
 
   app.stage.addChild(game);
 
@@ -63,6 +64,7 @@ async function bootstrap() {
     background.resize(app.screen.width, app.screen.height);
     game.x = app.screen.width / 2;
     game.y = app.screen.height / 2;
+    game.resize(app.screen.width, app.screen.height);
     bubbles.resize(app.screen.width, app.screen.height);
   });
 }
