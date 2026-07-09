@@ -80,7 +80,12 @@ export class CGameView extends Container {
 
     this.button.on("pointerup", () => {
       if (!this.isBusy) {
-        this.spin();
+        const started = this.spin();
+
+        if (!started) {
+          return;
+        }
+
         this.button.setEnabled(false);
 
         setTimeout(() => {
@@ -88,8 +93,11 @@ export class CGameView extends Container {
           this.button.setState(false);
         }, this.config.minSpinDuration);
       } else {
-        this.button.setEnabled(false);
-        this.stop();
+        const stopped = this.stop();
+
+        if (stopped) {
+          this.button.setEnabled(false);
+        }
       }
     });
 
@@ -138,8 +146,21 @@ export class CGameView extends Container {
 
   spin() {
     if (this.isBusy) {
-      return;
+      return false;
     }
+
+    const oldBalance = this.playerState.balance;
+
+    if (!this.playerState.placeBet()) {
+      return false;
+    }
+
+    const newBalance = this.playerState.balance;
+
+    if (this.hudView) {
+      this.hudView.countBalance(oldBalance, newBalance);
+    }
+
     this.currentWinSum = 0;
     this.isBusy = true;
     this.isStopping = false;
@@ -167,22 +188,23 @@ export class CGameView extends Container {
     this.autoStopTimer = setTimeout(() => {
       this.stop();
     }, this.config.autoStopDelay);
+    return true;
   }
 
   stop() {
     if (!this.isBusy || this.isStopping) {
-      return;
-    }
-
-    if (this.autoStopTimer) {
-      clearTimeout(this.autoStopTimer);
-      this.autoStopTimer = null;
+      return false;
     }
 
     const elapsed = performance.now() - this.spinStartedAt;
 
     if (elapsed < this.config.minSpinDuration) {
-      return;
+      return false;
+    }
+
+    if (this.autoStopTimer) {
+      clearTimeout(this.autoStopTimer);
+      this.autoStopTimer = null;
     }
 
     this.isStopping = true;
@@ -199,6 +221,7 @@ export class CGameView extends Container {
         this.reels[i].stopWith(spinResult.reelAt(i));
       }, i * this.config.reelStopDelay);
     }
+    return true;
   }
 
   resize(width, height) {

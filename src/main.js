@@ -43,6 +43,9 @@ async function bootstrap() {
   const playerState = new CPlayerState({
     balance: config.player.initialBalance ?? 1000,
     bet: config.player.initialBet ?? 10,
+    minBet: config.player.minBet ?? 10,
+    maxBet: config.player.maxBet ?? 100,
+    betStep: config.player.betStep ?? 10,
   });
   const spinService = new CSpinService(config);
   const winService = new CWinService(config);

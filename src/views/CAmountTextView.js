@@ -11,6 +11,7 @@ export class CAmountTextView extends Container {
     this.currentValue = 0;
     this.targetValue = 0;
     this.countSpeed = 0;
+    this.countDirection = 1;
     this.isCounting = false;
     this.onComplete = null;
 
@@ -30,6 +31,7 @@ export class CAmountTextView extends Container {
     this.targetValue = value;
     this.countSpeed = 0;
     this.isCounting = false;
+    this.countDirection = 1;
 
     this.text.text = `${this.label}: ${this.currentValue}`;
   }
@@ -70,8 +72,11 @@ export class CAmountTextView extends Container {
   countFromTo(from, to, duration = 1000, onComplete = null) {
     this.currentValue = from;
     this.targetValue = to;
-    this.isCounting = to > from;
-    this.countSpeed = duration > 0 ? (to - from) / duration : to - from;
+    const distance = to - from;
+    this.isCounting = distance !== 0;
+    this.countDirection = Math.sign(distance) || 1;
+
+    this.countSpeed = duration > 0 ? Math.abs(distance) / duration : Math.abs(distance);
     this.onComplete = onComplete;
 
     this.text.text = `${this.label}: ${Math.floor(from)}`;
@@ -86,10 +91,8 @@ export class CAmountTextView extends Container {
       return;
     }
 
-    const nextValue = Math.min(
-      this.targetValue,
-      this.currentValue + this.countSpeed * delta,
-    );
+    const nextValue =
+      this.currentValue + this.countSpeed * delta * this.countDirection;
     const displayValue = Math.floor(nextValue);
 
     if (displayValue !== Math.floor(this.currentValue)) {
@@ -98,7 +101,12 @@ export class CAmountTextView extends Container {
 
     this.currentValue = nextValue;
 
-    if (this.currentValue >= this.targetValue) {
+    const isComplete =
+      this.countDirection > 0
+        ? this.currentValue >= this.targetValue
+        : this.currentValue <= this.targetValue;
+
+    if (isComplete) {
       this.complete();
     }
   }

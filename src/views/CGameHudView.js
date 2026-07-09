@@ -28,6 +28,8 @@ export class CGameHudView extends Container {
     installHudFont();
 
     this.config = config;
+    this.onDecreaseBet = null;
+    this.onIncreaseBet = null;
 
     this.winView = new CAmountTextView({
       label: "WIN",
@@ -58,6 +60,11 @@ export class CGameHudView extends Container {
 
   setBet(amount) {
     this.betView.setValue(amount);
+  }
+
+  setBetChangeHandlers({ onDecrease, onIncrease }) {
+    this.onDecreaseBet = onDecrease;
+    this.onIncreaseBet = onIncrease;
   }
 
   resize(width, height) {
