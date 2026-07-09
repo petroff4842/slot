@@ -97,10 +97,11 @@ export class CGameView extends Container {
       this.button.setState(true);
       this.button.setEnabled(true);
       if (this.hudView) {
-        this.hudView.countWin(this.currentWinSum, () => {
-          if (this.currentWinSum > 0) {
+        const winAmount = this.currentWinSum;
+        this.hudView.countWin(winAmount, () => {
+          if (winAmount > 0) {
             const oldBalance = this.playerState.balance;
-            const newBalance = this.playerState.addWin(this.currentWinSum);
+            const newBalance = this.playerState.addWin(winAmount);
             this.hudView.countBalance(oldBalance, newBalance);
           }
         });

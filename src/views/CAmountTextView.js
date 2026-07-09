@@ -34,6 +34,21 @@ export class CAmountTextView extends Container {
     this.text.text = `${this.label}: ${this.currentValue}`;
   }
 
+  complete() {
+    if (!this.isCounting) {
+      return;
+    }
+
+    this.setValue(this.targetValue);
+
+    const onComplete = this.onComplete;
+    this.onComplete = null;
+
+    if (onComplete) {
+      onComplete();
+    }
+  }
+
   clear() {
     this.setValue(0);
   }
@@ -84,14 +99,7 @@ export class CAmountTextView extends Container {
     this.currentValue = nextValue;
 
     if (this.currentValue >= this.targetValue) {
-      this.setValue(this.targetValue);
-
-      const onComplete = this.onComplete;
-      this.onComplete = null;
-
-      if (onComplete) {
-        onComplete();
-      }
+      this.complete();
     }
   }
 }

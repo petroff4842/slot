@@ -51,6 +51,7 @@ export class CGameHudView extends Container {
   }
 
   clearWin() {
+    this.winView.complete();
     this.winView.clear();
   }
 
