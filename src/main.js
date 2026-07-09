@@ -3,6 +3,9 @@ import { CGameView } from "./views/CGameView.js";
 import { CGameConfig } from "./config/CGameConfig.js";
 import { CBubblesBackgroundView } from "./views/CBubblesBackgroundView.js";
 import { CBackgroundView } from "./views/CBackgroundView.js";
+import { CPlayerState } from "./models/CPlayerState.js";
+import { CSpinService } from "./services/CSpinService.js";
+import { CWinService } from "./services/CWinService.js";
 
 async function bootstrap() {
   const app = new Application();
@@ -37,7 +40,12 @@ async function bootstrap() {
   app.stage.addChild(bubbles);
 
   const config = new CGameConfig();
-  const game = new CGameView(config);
+  const playerState = new CPlayerState({
+    balance: config.player.initialBalance ?? 1000,
+  });
+  const spinService = new CSpinService(config);
+  const winService = new CWinService(config);
+  const game = new CGameView(config, playerState, spinService, winService);
 
   await game.init();
   game.x = app.screen.width / 2;

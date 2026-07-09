@@ -36,17 +36,35 @@ export class CGameHudView extends Container {
     this.winView.y = 300;
 
     this.addChild(this.winView);
+
+    this.balanceView = new CAmountTextView({
+      label: "BALANCE",
+      fontFamily: "HudFont",
+      fontSize: 42,
+    });
+    this.balanceView.y = -350;
+    this.balanceView.x = -400;
+    this.addChild(this.balanceView);
   }
 
   clearWin() {
     this.winView.clear();
   }
 
-  countWin(amount) {
-    this.winView.countTo(amount, 2000);
+  setBalance(amount) {
+    this.balanceView.setValue(amount);
+  }
+
+  countBalance(from, to) {
+    this.balanceView.countFromTo(from, to, 2000);
+  }
+
+  countWin(amount, onComplete = null) {
+    this.winView.countTo(amount, 2000, onComplete);
   }
 
   update(delta) {
     this.winView.update(delta);
+    this.balanceView.update(delta);
   }
 }

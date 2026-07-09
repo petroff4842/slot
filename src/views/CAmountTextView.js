@@ -12,6 +12,7 @@ export class CAmountTextView extends Container {
     this.targetValue = 0;
     this.countSpeed = 0;
     this.isCounting = false;
+    this.onComplete = null;
 
     this.text = new BitmapText({
       text: `${this.label}: 0`,
@@ -37,16 +38,31 @@ export class CAmountTextView extends Container {
     this.setValue(0);
   }
 
-  countTo(value, duration = 1000) {
+  countTo(value, duration = 1000, onComplete = null) {
     this.currentValue = 0;
     this.targetValue = value;
     this.isCounting = value > 0;
     this.countSpeed = duration > 0 ? value / duration : value;
+    this.onComplete = onComplete;
 
     this.text.text = `${this.label}: 0`;
 
     if (!this.isCounting) {
       this.setValue(value);
+    }
+  }
+
+  countFromTo(from, to, duration = 1000, onComplete = null) {
+    this.currentValue = from;
+    this.targetValue = to;
+    this.isCounting = to > from;
+    this.countSpeed = duration > 0 ? (to - from) / duration : to - from;
+    this.onComplete = onComplete;
+
+    this.text.text = `${this.label}: ${Math.floor(from)}`;
+
+    if (!this.isCounting) {
+      this.setValue(to);
     }
   }
 
@@ -69,6 +85,13 @@ export class CAmountTextView extends Container {
 
     if (this.currentValue >= this.targetValue) {
       this.setValue(this.targetValue);
+
+      const onComplete = this.onComplete;
+      this.onComplete = null;
+
+      if (onComplete) {
+        onComplete();
+      }
     }
   }
 }

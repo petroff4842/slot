@@ -2,15 +2,16 @@ import { Assets, Container } from "pixi.js";
 import { CReelView } from "./CReelView.js";
 import { CButton } from "../ui/CButton.js";
 import { CMachineFrame } from "../ui/CMachineFrame.js";
-import { CSpinService } from "../services/CSpinService.js";
-import { CWinService } from "../services/CWinService.js";
 import { CWinLinesView } from "./CWinLinesView.js";
 import { CGameHudView } from "./CGameHudView.js";
 
 export class CGameView extends Container {
-  constructor(config) {
+  constructor(config, playerState, spinService, winService) {
     super();
     this.config = config;
+    this.playerState = playerState;
+    this.spinService = spinService;
+    this.winService = winService;
     this.reels = [];
     this.button = null;
     this.isBusy = false;
@@ -19,8 +20,6 @@ export class CGameView extends Container {
     this.autoStopTimer = null;
     this.winLinesView = null;
     this.currentWinResult = { wins: [], totalWin: 0 };
-    this.spinService = new CSpinService(this.config);
-    this.winService = new CWinService(this.config);
     this.currentWinSum = 0;
     this.hudView = null;
   }
@@ -65,6 +64,7 @@ export class CGameView extends Container {
     this.addChild(this.winLinesView);
 
     this.hudView = new CGameHudView();
+    this.hudView.setBalance(this.playerState.balance);
     this.addChild(this.hudView);
 
     this.initButton();
@@ -97,7 +97,13 @@ export class CGameView extends Container {
       this.button.setState(true);
       this.button.setEnabled(true);
       if (this.hudView) {
-        this.hudView.countWin(this.currentWinSum);
+        this.hudView.countWin(this.currentWinSum, () => {
+          if (this.currentWinSum > 0) {
+            const oldBalance = this.playerState.balance;
+            const newBalance = this.playerState.addWin(this.currentWinSum);
+            this.hudView.countBalance(oldBalance, newBalance);
+          }
+        });
       }
     };
   }

@@ -131,6 +131,10 @@ export class CGameConfig {
     for (let i = 0; i < this.reelsCount; i++) {
       this.sequences.push(buildSequence(i));
     }
+
+    this.player = {
+      initialBalance: 1000,
+    };
   }
 
   sequenceForReel(index) {
