@@ -13,7 +13,7 @@ function installHudFont() {
     style: {
       fontFamily: "Arial",
       fontSize: 48,
-      fill: 0xffdd55,
+      fill: 0xffdd00,
       fontWeight: "bold",
     },
     chars: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ:., ",
@@ -28,8 +28,6 @@ export class CGameHudView extends Container {
     installHudFont();
 
     this.config = config;
-    this.onDecreaseBet = null;
-    this.onIncreaseBet = null;
 
     this.winView = new CAmountTextView({
       label: "WIN",
@@ -37,7 +35,7 @@ export class CGameHudView extends Container {
       fontSize: 42,
     });
 
-    this.winView.y = 300;
+    this.winView.y = 230;
 
     this.addChild(this.winView);
 
@@ -54,17 +52,13 @@ export class CGameHudView extends Container {
       fontSize: 42,
     });
 
-    this.betView.y = 355;
+    this.betView.x = -210;
+    this.betView.y = 300;
     this.addChild(this.betView);
   }
 
   setBet(amount) {
     this.betView.setValue(amount);
-  }
-
-  setBetChangeHandlers({ onDecrease, onIncrease }) {
-    this.onDecreaseBet = onDecrease;
-    this.onIncreaseBet = onIncrease;
   }
 
   resize(width, height) {

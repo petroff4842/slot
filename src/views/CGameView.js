@@ -30,6 +30,8 @@ export class CGameView extends Container {
       "/ui/button.png",
       "/ui/spin.png",
       "/ui/stop.png",
+      "/ui/plus.png",
+      "/ui/minus.png",
     ]);
 
     for (let i = 0; i < this.config.reelsCount; i++) {
@@ -71,6 +73,8 @@ export class CGameView extends Container {
     this.controlsView = new CControlsView({
       reelHeight: totalHeight,
       onSpinPress: () => this.handleSpinButtonPress(),
+      onIncreaseBetPress: () => this.increaseBet(),
+      onDecreaseBetPress: () => this.decreaseBet(),
     });
     this.addChild(this.controlsView);
 
@@ -111,6 +115,16 @@ export class CGameView extends Container {
         this.controlsView.setSpinButtonEnabled(false);
       }
     }
+  }
+
+  increaseBet() {
+    this.playerState.increaseBet();
+    this.hudView.setBet(this.playerState.bet);
+  }
+
+  decreaseBet() {
+    this.playerState.decreaseBet();
+    this.hudView.setBet(this.playerState.bet);
   }
 
   update(delta) {
