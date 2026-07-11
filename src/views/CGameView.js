@@ -1,6 +1,6 @@
 import { Assets, Container } from "pixi.js";
 import { CReelView } from "./CReelView.js";
-import { CButton } from "../ui/CButton.js";
+import { CSpinButton } from "../ui/CSpinButton.js";
 import { CMachineFrame } from "../ui/CMachineFrame.js";
 import { CWinLinesView } from "./CWinLinesView.js";
 import { CGameHudView } from "./CGameHudView.js";
@@ -72,34 +72,17 @@ export class CGameView extends Container {
   }
 
   initButton() {
-    this.button = new CButton();
+    this.button = new CSpinButton({
+      texturePath: "/ui/button.png",
+      scale: 0.8,
+      glowScale: 0.815,
+      glowTint: 0xffdd00,
+      onPress: () => this.handleSpinButtonPress(),
+    });
     this.button.setState(true);
 
     this.button.x = 0;
     this.button.y = this.reels[0].height / 2 + 80;
-
-    this.button.on("pointerup", () => {
-      if (!this.isBusy) {
-        const started = this.spin();
-
-        if (!started) {
-          return;
-        }
-
-        this.button.setEnabled(false);
-
-        setTimeout(() => {
-          this.button.setEnabled(true);
-          this.button.setState(false);
-        }, this.config.minSpinDuration);
-      } else {
-        const stopped = this.stop();
-
-        if (stopped) {
-          this.button.setEnabled(false);
-        }
-      }
-    });
 
     this.addChild(this.button);
     this.onAllStopped = () => {
@@ -116,6 +99,29 @@ export class CGameView extends Container {
         });
       }
     };
+  }
+
+  handleSpinButtonPress() {
+    if (!this.isBusy) {
+      const started = this.spin();
+
+      if (!started) {
+        return;
+      }
+
+      this.button.setEnabled(false);
+
+      setTimeout(() => {
+        this.button.setEnabled(true);
+        this.button.setState(false);
+      }, this.config.minSpinDuration);
+    } else {
+      const stopped = this.stop();
+
+      if (stopped) {
+        this.button.setEnabled(false);
+      }
+    }
   }
 
   update(delta) {
