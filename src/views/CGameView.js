@@ -77,10 +77,12 @@ export class CGameView extends Container {
       onDecreaseBetPress: () => this.decreaseBet(),
     });
     this.addChild(this.controlsView);
+    this.updateBetButtonsState();
 
     this.onAllStopped = () => {
       this.controlsView.setSpinButtonState(true);
       this.controlsView.setSpinButtonEnabled(true);
+      this.updateBetButtonsState();
       if (this.hudView) {
         const winAmount = this.currentWinSum;
         this.hudView.countWin(winAmount, () => {
@@ -120,11 +122,23 @@ export class CGameView extends Container {
   increaseBet() {
     this.playerState.increaseBet();
     this.hudView.setBet(this.playerState.bet);
+    this.updateBetButtonsState();
   }
 
   decreaseBet() {
     this.playerState.decreaseBet();
     this.hudView.setBet(this.playerState.bet);
+    this.updateBetButtonsState();
+  }
+
+  updateBetButtonsState() {
+    this.controlsView.setIncreaseBetButtonEnabled(
+      this.playerState.bet < this.playerState.maxBet,
+    );
+
+    this.controlsView.setDecreaseBetButtonEnabled(
+      this.playerState.bet > this.playerState.minBet,
+    );
   }
 
   update(delta) {
@@ -163,6 +177,8 @@ export class CGameView extends Container {
     if (!this.playerState.placeBet()) {
       return false;
     }
+
+    this.controlsView.setBetButtonsEnabled(false);
 
     const newBalance = this.playerState.balance;
 

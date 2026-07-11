@@ -52,4 +52,17 @@ export class CControlsView extends Container {
   setSpinButtonEnabled(enabled) {
     this.spinButton.setEnabled(enabled);
   }
+
+  setIncreaseBetButtonEnabled(enabled) {
+    this.increaseBetButton.setEnabled(enabled);
+  }
+
+  setDecreaseBetButtonEnabled(enabled) {
+    this.decreaseBetButton.setEnabled(enabled);
+  }
+
+  setBetButtonsEnabled(enabled) {
+    this.setIncreaseBetButtonEnabled(enabled);
+    this.setDecreaseBetButtonEnabled(enabled);
+  }
 }
