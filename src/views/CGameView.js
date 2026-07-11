@@ -1,6 +1,6 @@
 import { Assets, Container } from "pixi.js";
 import { CReelView } from "./CReelView.js";
-import { CSpinButton } from "../ui/CSpinButton.js";
+import { CControlsView } from "./CControlsView.js";
 import { CMachineFrame } from "../ui/CMachineFrame.js";
 import { CWinLinesView } from "./CWinLinesView.js";
 import { CGameHudView } from "./CGameHudView.js";
@@ -13,7 +13,6 @@ export class CGameView extends Container {
     this.spinService = spinService;
     this.winService = winService;
     this.reels = [];
-    this.button = null;
     this.isBusy = false;
     this.isStopping = false;
     this.onAllStopped = null;
@@ -22,6 +21,7 @@ export class CGameView extends Container {
     this.currentWinResult = { wins: [], totalWin: 0 };
     this.currentWinSum = 0;
     this.hudView = null;
+    this.controlsView = null;
   }
 
   async init() {
@@ -68,26 +68,15 @@ export class CGameView extends Container {
     this.hudView.setBet(this.playerState.bet);
     this.addChild(this.hudView);
 
-    this.initButton();
-  }
-
-  initButton() {
-    this.button = new CSpinButton({
-      texturePath: "/ui/button.png",
-      scale: 0.8,
-      glowScale: 0.815,
-      glowTint: 0xffdd00,
-      onPress: () => this.handleSpinButtonPress(),
+    this.controlsView = new CControlsView({
+      reelHeight: totalHeight,
+      onSpinPress: () => this.handleSpinButtonPress(),
     });
-    this.button.setState(true);
+    this.addChild(this.controlsView);
 
-    this.button.x = 0;
-    this.button.y = this.reels[0].height / 2 + 80;
-
-    this.addChild(this.button);
     this.onAllStopped = () => {
-      this.button.setState(true);
-      this.button.setEnabled(true);
+      this.controlsView.setSpinButtonState(true);
+      this.controlsView.setSpinButtonEnabled(true);
       if (this.hudView) {
         const winAmount = this.currentWinSum;
         this.hudView.countWin(winAmount, () => {
@@ -109,17 +98,17 @@ export class CGameView extends Container {
         return;
       }
 
-      this.button.setEnabled(false);
+      this.controlsView.setSpinButtonEnabled(false);
 
       setTimeout(() => {
-        this.button.setEnabled(true);
-        this.button.setState(false);
+        this.controlsView.setSpinButtonEnabled(true);
+        this.controlsView.setSpinButtonState(false);
       }, this.config.minSpinDuration);
     } else {
       const stopped = this.stop();
 
       if (stopped) {
-        this.button.setEnabled(false);
+        this.controlsView.setSpinButtonEnabled(false);
       }
     }
   }
